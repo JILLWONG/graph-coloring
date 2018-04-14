@@ -16,38 +16,48 @@ string url_500_9="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC500.9.col";
 string url_1000_1="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC1000.1.col";
 string url_1000_5="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC1000.5.col";
 string url_1000_9="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC1000.9.col";
-//Á¬½Ó¼¯ºÏ
-int conjSet[2][3300]= {0};
-//×ÜµãÊı
+
+//æœ€å¤§é¢œè‰²æ•°
+#define maxColor 80
+//æœ€å¤§ç‚¹æ•°
+#define maxPoint 500
+//æœ€å¤§è¿æ¥æ•°
+#define maxConj 63000
+
+//è¿æ¥é›†åˆ
+int conjSet[2][maxConj]= {0};
+//æ€»ç‚¹æ•°
 int point=0;
-//×Ü±ßÊı
+//æ€»è¾¹æ•°
 int edge=0;
-//µã¶ÔÓ¦ÑÕÉ«ÁĞ±í
-int pColor[300]= {0};
-//×Ü³åÍ»Êı
+//ç‚¹å¯¹åº”é¢œè‰²åˆ—è¡¨
+int pColor[maxPoint]= {0};
+//æ€»å†²çªæ•°
 int allConfli=0;
-//³åÍ»±ßÁĞ±í
-int pConjList[300][300]= {-1};
-//×ÜÑÕÉ«Êı£¨±àºÅ0-9£©
-int colorNum=8;
-//³åÍ»±í
-int adjTbl[300][10]= {0};
-//½û¼É±í
-int tabuTbl[300][10]= {0};
-//Ñ¡ÖĞµã
+//å…¨å±€æœ€å°å†²çªæ•°
+int minConfli=0;
+//å†²çªè¾¹åˆ—è¡¨
+int pConjList[maxPoint][maxPoint]= {-1};
+//æ€»é¢œè‰²æ•°ï¼ˆç¼–å·0-9ï¼‰
+int colorNum=12;
+//å†²çªè¡¨
+int adjTbl[maxPoint][maxColor]= {0};
+//ç¦å¿Œè¡¨
+int tabuTbl[maxPoint][maxColor]= {0};
+//é€‰ä¸­ç‚¹
 int curPoint=0;
-//µ±Ç°ÑÕÉ«
+//å½“å‰é¢œè‰²
 int fromColor=0;
-//¼´½«±ä³ÉµÄÑÕÉ«
+//å³å°†å˜æˆçš„é¢œè‰²
 int toColor=0;
-//µü´ú´ÎÊı
+//è¿­ä»£æ¬¡æ•°
 int iter=0;
-//¼õÉÙµÄ³åÍ»
+//å‡å°‘çš„å†²çª
 int delt=0;
-//³åÍ»ÏàÍ¬µÄµü´ú´ÎÊı
+//å†²çªç›¸åŒçš„è¿­ä»£æ¬¡æ•°
 int cfliEqNum=0;
 
-void readFile(string url) //¶ÁÎÄ¼ş£¬¹¹½¨Á¬½Ó¼¯ºÏ
+void readFile(string url) //è¯»æ–‡ä»¶ï¼Œæ„å»ºè¿æ¥é›†åˆ
 {
     ifstream in(url,ios::in);
     char buffer[256];
@@ -99,9 +109,16 @@ void readFile(string url) //¶ÁÎÄ¼ş£¬¹¹½¨Á¬½Ó¼¯ºÏ
         }
     }
     in.close();
+/*
+    cout<<point<<" "<<edge<<endl;
+    for(int i=0;i<edge;i++)
+    {
+        cout<<conjSet[0][i]<<" "<<conjSet[1][i]<<endl;
+    }
+*/
 }
 
-void initial() //³õÊ¼»¯½â
+void initial() //åˆå§‹åŒ–è§£
 {
     srand((int)time(0));
     for(int i=0; i<point; i++)
@@ -110,13 +127,14 @@ void initial() //³õÊ¼»¯½â
     }
 
     allConfli=0;
+    minConfli=0;
     //pConjList[150][150]={-1};
-    for(int a=0; a<300; a++)
+    for(int a=0; a<maxPoint; a++)
     {
-        for(int b=0; b<300; b++)
+        for(int b=0; b<maxPoint; b++)
         {
             pConjList[a][b]=-1;
-            if(b<10)
+            if(b<maxColor)
             {
                 adjTbl[a][b]=0;
                 tabuTbl[a][b]=0;
@@ -132,7 +150,7 @@ void initial() //³õÊ¼»¯½â
     delt=0;
 }
 
-void buildAdjTbl() //¹¹½¨³ğÈË±í¡¢³åÍ»±ßÁĞ±í
+void buildAdjTbl() //æ„å»ºä»‡äººè¡¨ã€å†²çªè¾¹åˆ—è¡¨
 {
     for(int i=0; i<edge; i++)
     {
@@ -164,6 +182,7 @@ void countAllConli()
         allConfli+=adjTbl[i][pColor[i]];
     }
     allConfli/=2;
+    minConfli=allConfli;
 }
 
 void findMove()
@@ -238,7 +257,7 @@ void findMove()
             }
         }
     }
-    if(curDeltTb<curDeltNtb&&curDeltTb<0)
+    if(curDeltTb<curDeltNtb&&allConfli+curDeltTb<minConfli)
     {
         delt=curDeltTb;
         curPoint=curPTb;
@@ -256,9 +275,13 @@ void findMove()
 
 void makeMove()
 {
-    pColor[curPoint]=toColor; //¸üĞÂ×ÅÉ«·½°¸
-    allConfli+=delt; //¸üĞÂ³åÍ»×ÜÊı
-    for(int i=0; i<point; i++) //¸üĞÂ³ğÈË±í
+    pColor[curPoint]=toColor; //æ›´æ–°ç€è‰²æ–¹æ¡ˆ
+    allConfli+=delt; //æ›´æ–°å†²çªæ€»æ•°
+    if(allConfli<minConfli)
+    {
+        minConfli=allConfli;
+    }
+    for(int i=0; i<point; i++) //æ›´æ–°ä»‡äººè¡¨
     {
         if(pConjList[i][curPoint]==-1)
         {
@@ -270,7 +293,7 @@ void makeMove()
             adjTbl[pConjList[i][curPoint]][toColor]++;
         }
     }
-    for(int j=0; j<point; j++) //¸üĞÂ½û¼É±í
+    for(int j=0; j<point; j++) //æ›´æ–°ç¦å¿Œè¡¨
     {
         tabuTbl[curPoint][fromColor]=iter+allConfli+rand()%10;
     }
@@ -279,22 +302,27 @@ void makeMove()
 
 int main()
 {
-    readFile(url_250_1);
+    string filename=url_500_1;
+    readFile(filename);
     for(int i=0; i<1; i++)
     {
         initial();
         buildAdjTbl();
         countAllConli();
-        int cfliBfr=allConfli;
-        for(iter=0; iter<300000; iter++)
+        //int cfliBfr=allConfli;
+        cout<<filename<<endl;
+        cout<<"use color:"<<colorNum<<endl;
+        double start,finish;
+        start=clock();
+        for(iter=0; iter<300000000; iter++)
         {
             //cout<<allConfli<<"\n";
-            cfliBfr=allConfli;
+            //cfliBfr=allConfli;
             findMove();
             makeMove();
             if(allConfli==0)
             {
-                cout<<"find!\niter:"<<iter;
+                //cout<<"find!\niter:"<<iter<<endl;
                 break;
             }
             /*
@@ -309,6 +337,16 @@ int main()
             cout<<cfliEqNum<<"!\n";
             */
         }
+        /*
+        for(int i=0;i<point;i++)
+        {
+            cout<<adjTbl[i][pColor[i]]<<endl;
+        }
+        */
+        finish=clock();
+        cout<<"iter:"<<iter<<endl;
+        cout<<"time:"<<finish-start<<"(ms)"<<endl;
+        cout<<"min conflict:"<<minConfli<<endl;
         if(allConfli==0)
         {
             break;
