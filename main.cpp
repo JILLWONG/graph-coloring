@@ -17,47 +17,54 @@ string url_1000_1="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC1000.1.col";
 string url_1000_5="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC1000.5.col";
 string url_1000_9="C:\\Users\\Lenovo\\Desktop\\instances\\DSJC1000.9.col";
 
-//æœ€å¤§é¢œè‰²æ•°
+//×î´óÑÕÉ«Êı
 #define maxColor 80
-//æœ€å¤§ç‚¹æ•°
+//×î´óµãÊı
 #define maxPoint 500
-//æœ€å¤§è¿æ¥æ•°
+//×î´óÁ¬½ÓÊı
 #define maxConj 63000
 
-//è¿æ¥é›†åˆ
+//½â¾ö·½°¸
+typedef struct solu
+{
+    int conflition;
+    int pColor[maxPoint]={0};
+}solution;
+
+//Á¬½Ó¼¯ºÏ
 int conjSet[2][maxConj]= {0};
-//æ€»ç‚¹æ•°
+//×ÜµãÊı
 int point=0;
-//æ€»è¾¹æ•°
+//×Ü±ßÊı
 int edge=0;
-//ç‚¹å¯¹åº”é¢œè‰²åˆ—è¡¨
+//µã¶ÔÓ¦ÑÕÉ«ÁĞ±í
 int pColor[maxPoint]= {0};
-//æ€»å†²çªæ•°
+//×Ü³åÍ»Êı
 int allConfli=0;
-//å…¨å±€æœ€å°å†²çªæ•°
+//È«¾Ö×îĞ¡³åÍ»Êı
 int minConfli=0;
-//å†²çªè¾¹åˆ—è¡¨
+//³åÍ»±ßÁĞ±í
 int pConjList[maxPoint][maxPoint]= {-1};
-//æ€»é¢œè‰²æ•°ï¼ˆç¼–å·0-9ï¼‰
-int colorNum=12;
-//å†²çªè¡¨
+//×ÜÑÕÉ«Êı£¨±àºÅ0-9£©
+int colorNum=48;
+//³åÍ»±í
 int adjTbl[maxPoint][maxColor]= {0};
-//ç¦å¿Œè¡¨
+//½û¼É±í
 int tabuTbl[maxPoint][maxColor]= {0};
-//é€‰ä¸­ç‚¹
+//Ñ¡ÖĞµã
 int curPoint=0;
-//å½“å‰é¢œè‰²
+//µ±Ç°ÑÕÉ«
 int fromColor=0;
-//å³å°†å˜æˆçš„é¢œè‰²
+//¼´½«±ä³ÉµÄÑÕÉ«
 int toColor=0;
-//è¿­ä»£æ¬¡æ•°
+//µü´ú´ÎÊı
 int iter=0;
-//å‡å°‘çš„å†²çª
+//¼õÉÙµÄ³åÍ»
 int delt=0;
-//å†²çªç›¸åŒçš„è¿­ä»£æ¬¡æ•°
+//³åÍ»ÏàÍ¬µÄµü´ú´ÎÊı
 int cfliEqNum=0;
 
-void readFile(string url) //è¯»æ–‡ä»¶ï¼Œæ„å»ºè¿æ¥é›†åˆ
+void readFile(string url) //¶ÁÎÄ¼ş£¬¹¹½¨Á¬½Ó¼¯ºÏ
 {
     ifstream in(url,ios::in);
     char buffer[256];
@@ -118,7 +125,7 @@ void readFile(string url) //è¯»æ–‡ä»¶ï¼Œæ„å»ºè¿æ¥é›†åˆ
 */
 }
 
-void initial() //åˆå§‹åŒ–è§£
+void initial() //³õÊ¼»¯½â
 {
     srand((int)time(0));
     for(int i=0; i<point; i++)
@@ -150,7 +157,7 @@ void initial() //åˆå§‹åŒ–è§£
     delt=0;
 }
 
-void buildAdjTbl() //æ„å»ºä»‡äººè¡¨ã€å†²çªè¾¹åˆ—è¡¨
+void buildAdjTbl() //¹¹½¨³ğÈË±í¡¢³åÍ»±ßÁĞ±í
 {
     for(int i=0; i<edge; i++)
     {
@@ -275,13 +282,13 @@ void findMove()
 
 void makeMove()
 {
-    pColor[curPoint]=toColor; //æ›´æ–°ç€è‰²æ–¹æ¡ˆ
-    allConfli+=delt; //æ›´æ–°å†²çªæ€»æ•°
+    pColor[curPoint]=toColor; //¸üĞÂ×ÅÉ«·½°¸
+    allConfli+=delt; //¸üĞÂ³åÍ»×ÜÊı
     if(allConfli<minConfli)
     {
         minConfli=allConfli;
     }
-    for(int i=0; i<point; i++) //æ›´æ–°ä»‡äººè¡¨
+    for(int i=0; i<point; i++) //¸üĞÂ³ğÈË±í
     {
         if(pConjList[i][curPoint]==-1)
         {
@@ -293,31 +300,76 @@ void makeMove()
             adjTbl[pConjList[i][curPoint]][toColor]++;
         }
     }
-    for(int j=0; j<point; j++) //æ›´æ–°ç¦å¿Œè¡¨
+    for(int j=0; j<point; j++) //¸üĞÂ½û¼É±í
     {
         tabuTbl[curPoint][fromColor]=iter+allConfli+rand()%10;
     }
+}
 
+void crossover()
+{
+
+}
+
+void check()
+{
+    ofstream out;
+    out.open("log.txt",ios::app);
+    int checkConfli=0;
+    for(int i=0;i<edge;i++)
+    {
+        if(pColor[conjSet[0][i]-1]==pColor[conjSet[1][i]-1])
+        {
+            checkConfli++;
+            cout<<"conflict edge "<<i<<": "<<conjSet[0][i]<<"-"<<conjSet[1][i]<<endl;
+            out<<"conflict edge "<<i<<": "<<conjSet[0][i]<<"-"<<conjSet[1][i]<<endl;
+        }
+    }
+    if(checkConfli>0)
+    {
+        cout<<"check conflict num: "<<checkConfli<<endl;
+        out<<"check conflict num: "<<checkConfli<<endl<<endl;
+    }
+    else
+    {
+        cout<<"check conflict num: "<<checkConfli<<endl;
+        out<<"check conflict num: "<<checkConfli<<endl;
+        cout<<"check result: right!"<<endl;
+        out<<"check result: right!"<<endl<<endl;
+    }
+    out.close();
 }
 
 int main()
 {
-    string filename=url_500_1;
+    string filename=url_500_5;
     readFile(filename);
+    ofstream out;
+    out.open("log.txt",ios::app);
+    //solution solu[2];
     for(int i=0; i<1; i++)
     {
         initial();
         buildAdjTbl();
         countAllConli();
-        //int cfliBfr=allConfli;
         cout<<filename<<endl;
-        cout<<"use color:"<<colorNum<<endl;
+        out<<filename<<endl;
+        cout<<"use color: "<<colorNum<<endl;
+        out<<"use color: "<<colorNum<<endl;
+        cout<<"initial solution: "<<endl;
+        out<<"initial solution: "<<endl;
+        for(int i=0;i<point;i++)
+        {
+            cout<<pColor[i]<<" ";
+            out<<pColor[i]<<" ";
+        }
+        cout<<endl;
+        out<<endl;
         double start,finish;
         start=clock();
         for(iter=0; iter<300000000; iter++)
         {
             //cout<<allConfli<<"\n";
-            //cfliBfr=allConfli;
             findMove();
             makeMove();
             if(allConfli==0)
@@ -325,17 +377,6 @@ int main()
                 //cout<<"find!\niter:"<<iter<<endl;
                 break;
             }
-            /*
-            if(cfliBfr==allConfli)
-            {
-                cfliEqNum++;
-            }
-            else
-            {
-                cfliEqNum=0;
-            }
-            cout<<cfliEqNum<<"!\n";
-            */
         }
         /*
         for(int i=0;i<point;i++)
@@ -344,14 +385,39 @@ int main()
         }
         */
         finish=clock();
-        cout<<"iter:"<<iter<<endl;
-        cout<<"time:"<<finish-start<<"(ms)"<<endl;
-        cout<<"min conflict:"<<minConfli<<endl;
+        cout<<"iter: "<<iter<<endl;
+        out<<"iter: "<<iter<<endl;
+        cout<<"time: "<<finish-start<<"(ms)"<<endl;
+        out<<"time: "<<finish-start<<"(ms)"<<endl;
+        cout<<"final conflict num: "<<allConfli<<endl;
+        out<<"final conflict num: "<<allConfli<<endl;
+        cout<<"min conflict num: "<<minConfli<<endl;
+        out<<"min conflict num: "<<minConfli<<endl;
+        cout<<"final solution: "<<endl;
+        out<<"final solution: "<<endl;
+        for(int i=0;i<point;i++)
+        {
+            cout<<pColor[i]<<" ";
+            out<<pColor[i]<<" ";
+        }
+        cout<<endl;
+        out<<endl;
+        out.close();
         if(allConfli==0)
         {
             break;
         }
+        /*
+        else
+        {
+            solu[i].conflition=allConfli;
+            for(int j=0;j<maxPoint;j++)
+            {
+                solu[i].pColor[j]=pColor[j];
+            }
+        }
+        */
     }
-
+    check();
     return 0;
 }
